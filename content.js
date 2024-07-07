@@ -2,12 +2,15 @@
 const pageText = document.body.innerText;
 
 // Send message to background script for fact-checking
-chrome.runtime.sendMessage(
-  { action: "fact-check", text: pageText },
-  (response) => {
-    highlightFactCheckResults(response.results);
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "fact-check") {
+    // Extract text content from the page
+    const pageText = document.body.innerText;
+
+    // Send the text back to the sender
+    sendResponse({ text: pageText });
   }
-);
+});
 
 function highlightFactCheckResults(results) {
   // Highlight or flag the content based on the fact-checking results

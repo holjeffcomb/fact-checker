@@ -1,12 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      { action: "get-results" },
-      (response) => {
-        displayResults(response.results);
-      }
-    );
+  document.getElementById("fact-check-button").addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        { action: "fact-check" },
+        (response) => {
+          chrome.runtime.sendMessage(
+            { action: "fact-check", text: response.text },
+            (response) => {
+              displayResults(response.results);
+            }
+          );
+        }
+      );
+    });
   });
 });
 
